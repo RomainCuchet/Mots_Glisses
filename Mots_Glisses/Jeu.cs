@@ -1,0 +1,296 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Media;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Mots_Glisses
+{
+    internal class Jeu
+    {
+        Dictionnaire dictionary;
+        Plateau board;
+        List<Joueur> players = null;
+        string score_weighting_path;
+        int player_time;
+        char separator = ',';
+        int nb_round_by_player;
+        int nb_lasting_round;
+        double length_score_multiplicator;
+        int print_delay = 2000; // en ms
+
+        public Plateau Board
+        {
+            get { return board; }
+            set { board = value; }
+        }
+
+        public List<Joueur> Players
+        {
+            get { return players; }
+        }
+
+
+        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 15, string score_weighting_path = "../../Annexes/letters.txt", double length_score_multiplicator = 2) // time in secondes
+        {
+            this.dictionary = dictionary;
+            this.board = board;
+            this.player_time = player_time;
+            this.score_weighting_path = score_weighting_path;
+            this.nb_round_by_player = nb_round_by_player;
+            this.players = players;
+            this.length_score_multiplicator = length_score_multiplicator;
+        }
+
+        public void start()
+        {
+            if (players == null || players.Count < 1)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Il doit y avoir au moins un joueur pour lancer une partie");
+                Console.ResetColor();
+            }   
+                
+            else
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Tools.print_center("************");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Tools.print_center("Mots Glisses");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Tools.print_center("************");
+                Console.ResetColor();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine($"Les règles sont simples. A tour de rôle vous allez devoir trouver un maximum de mots en {player_time} secondes. Le jeu se termine après {nb_round_by_player} rounds pas joueur ou lorsque le plateau est vide. Plus un mot est long et ses lettres rares plus il rapporte de points !");
+                Console.WriteLine($"Bon courage\n{players_toString()}");
+                Console.WriteLine("Que le meilleur gagne !");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+                Tools.print_center(Tools.toString_mat(Tools.random_char_mat(8,8)));
+                Thread.Sleep(10000);
+                nb_lasting_round = nb_round_by_player * players.Count(); // get the total number of rounds according to the given parameters
+                int i = 0;
+                while (nb_lasting_round > 0)
+                {
+                    Console.WriteLine($"Prépare toi {players[i].Name} ton tour va commencer");
+                    Thread.Sleep(print_delay);
+                    round(players[i]);
+                    nb_lasting_round--;
+                    i++;
+                    if (i == players.Count) i = 0;
+                }
+                game_over();
+            }
+        }
+
+        public void game_over()
+        {
+            Console.WriteLine("Le jeu est terminé");
+            (bool valid, Dictionary<string, int> weighting) = get_weighting();
+            if (valid) assign_scores(weighting);
+            else throw new Exception("Erreur dans la génération des scores");
+            sort_players();
+            Console.WriteLine($"Féliciation {players[0].Name} tu es premier avec un score de {players[0].Score} !");
+            Console.WriteLine($"Les mots que tu as trouvé sont :  {players[0].found_words_toString()}");
+            for (int i = 1; i < players.Count; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{players[i].Name} tu es à la {i + 1} ème position avec {players[i].Score} points");
+                Console.WriteLine($"Les mots que tu as trouvé sont :  {players[i].found_words_toString()}");
+            }
+            Thread.Sleep(10000);
+            foreach (Joueur player in players) player.reset_score();
+        }
+
+        public bool add_player(string name)
+        {
+            Joueur player = new Joueur(name);
+            if (players == null)
+            {
+                players = new List<Joueur>();
+                players.Add(player);
+                return true;
+            }
+            else
+            {
+                bool not_exist = true;
+                for (int i = 0; not_exist && i < players.Count; i++)
+                {
+                    if (players[i].Name == player.Name) not_exist = false;
+                }
+                if (not_exist) players.Add(player);
+                return not_exist;
+            }
+        }
+
+        public bool delete_player(string name)
+        {
+            if (players == null) return false;
+            else
+            {
+                bool deleted = false;
+                for(int i=0; !deleted && i < players.Count;i++)
+                {
+                    if (name == players[i].Name)
+                    {
+                       players.RemoveAt(i);
+                        deleted = true;
+                    }
+                }
+                return deleted;
+            }
+        }
+        public void sort_players()
+        {
+            if (players != null && players.Count != 0)
+            {
+                Joueur p;
+                for(int i = 0; i < players.Count; i++) // there is no use to improuve our sorting algorithm because the number of player will always be very low
+                {
+                    for(int j = 0; j < players.Count-1; j++)
+                    {
+                        if (players[j] < players[j + 1])
+                        {
+                            p = players[j+1];
+                            players[j + 1] = players[j];
+                            players[j] = p;
+                        }
+                    }
+                }
+            }
+        }
+
+        public string players_toString()
+        {
+            if (players == null || players.Count<1) return "aucun joueur";
+            string res = "";
+            foreach (Joueur player in players) res += $"{player.Name}\n";
+            return res.Substring(0, res.Length - 1);
+
+        }
+
+        public (bool,Dictionary<string,int>) get_weighting()
+        {
+            Dictionary<string, int> weighting = new Dictionary<string, int>();
+            try
+            {
+                StreamReader sr = new StreamReader(score_weighting_path);
+                string line;
+                string[] string_tab;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string_tab = line.Split(separator);
+                    try
+                    {
+                        weighting.Add(string_tab[0], Convert.ToInt32(string_tab[2]));
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine($"an element with key {string_tab[0]} already exist");
+                        return (false,weighting);
+                    }
+                }
+                sr.Close();
+                return (true, weighting);
+            }
+            catch (Exception e)
+            {
+                // Let the user know what went wrong.
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+                return (false, weighting);
+            }
+        }
+
+        public void assign_scores(Dictionary<string, int> weighting)
+        {
+            double score;
+            foreach (Joueur player in players) // assign its score to each player
+            {
+                score = 0;
+                foreach (string w in player.Words)
+                {
+                    string word = w.ToUpper();
+                    score += word.Length * length_score_multiplicator; // increase score according to the length of the word and length_score_multiplicator
+                    foreach (char letter in word) // increase score according to the weighting of each letter
+                    {
+                        try { score += weighting[char.ToString(letter)]; }
+                        catch { throw new Exception($"key {letter} is missing in weighting"); };
+                    }
+                }
+                player.add_score(score);
+            }
+        }
+
+        public void round(Joueur player)
+        {
+            DateTime start_time = DateTime.Now;
+            string word;
+            int counter = 0;
+            bool running = true;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine($"La main est à {player.Name} pour {Math.Round(player_time - (DateTime.Now - start_time).TotalSeconds,1)} secondes");
+                Console.WriteLine();
+                Console.WriteLine(board.toString());
+                Console.WriteLine("Entrez un mot présent dans la board");
+                word = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                if ((DateTime.Now - start_time).TotalSeconds < player_time) // we must check the time
+                {
+                    if (word == null || word.Length < 2)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine("Votre mot doit avoir une longeur supérieure à 1");
+                        Thread.Sleep(print_delay);
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        if (!player.is_previously_found(word))
+                        {
+                            if (dictionary.search(word)) // if the word is in the given dictionnary try to handle it by the board
+                            {
+                                if (board.handle_word(word)) // handle the word and update the board if possible
+                                {
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                    Console.WriteLine($"Félicitation vous avez trouvé {word}");
+                                    Thread.Sleep(print_delay);
+                                    player.add_word(word); // save the word as found by the player
+                                    counter++;
+                                    if (board.is_empty())
+                                    {
+                                        running = false;
+                                    }
+                                }
+                                else { Console.WriteLine($"Il est impossible d'écrire {word} dans le plateau"); Thread.Sleep(print_delay); }
+                            }
+                            else { Console.WriteLine($"{word} n'est pas dans le dictionnaire français"); Thread.Sleep(print_delay); }
+                        }
+                        else { Console.WriteLine($"Dommage vous avez déjà joué le mot {word}. Vous ne pouvez plus l'utiliser ;)"); Thread.Sleep(print_delay); }
+                    }
+                }
+                else { Console.WriteLine($"Trop tard ! Vous n'avez pas eu le temps de jouer {word}"); Thread.Sleep(print_delay); }
+                Console.ResetColor();
+            }
+            while ((DateTime.Now - start_time).TotalSeconds < player_time && running);
+            if (running) Console.WriteLine($"Le temps est écoulé. Vous avez trouvé {counter} mots");
+            else
+            {
+                Console.WriteLine($"Vous avez trouvé {counter} mots");
+                game_over(); // the board is empty it is game over
+            }
+        }
+            
+    }
+}
