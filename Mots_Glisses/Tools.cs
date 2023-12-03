@@ -425,5 +425,38 @@ namespace Mots_Glisses
 
             return csvFileNames;
         }
+
+        public static void print_dictionary(Dictionary<string, int> dictionnaire)
+        {
+            // Vérifier si le dictionnaire est nul ou vide
+            if (dictionnaire == null || dictionnaire.Count == 0)
+            {
+                Console.WriteLine("dictionnaire vide");
+            }
+            else
+            {
+                int i = 0;
+                string res = "";
+                // Afficher les clés et les valeurs du dictionnaire
+                foreach (var kvp in dictionnaire)
+                {
+                    if (i == 4)
+                    {
+                        print_center(res);
+                        i = 1;
+                        res = $"  {kvp.Key} : {kvp.Value} points";
+                    }
+                    else
+                    {
+                        res += $"  {kvp.Key} : {kvp.Value} points";
+                        i++;
+                    }
+                        
+                }
+                print_center(res);
+            }
+        }
     }
+
+    
 }

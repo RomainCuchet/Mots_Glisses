@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Permissions;
 using System.Threading;
 
 namespace Mots_Glisses
@@ -13,7 +14,7 @@ namespace Mots_Glisses
             bool is_submenu = true;
             int print_delay = 2000; // print delay in ms
             Console.WriteLine("Veuillez utiliser les flèches pour naviguer dans le menu et pressez entrer pour valider une commande");
-            string[] cmd = new string[] { "Ajouter un joueur", "Supprimer un joueur", "Afficher les joueurs", "Lancer une partie" };
+            string[] cmd = new string[] { "Ajouter un joueur", "Supprimer un joueur", "Afficher les joueurs", "Lancer une partie","Règles"};
             int i = 0;
             bool running = true;
             ConsoleKeyInfo key;
@@ -42,7 +43,11 @@ namespace Mots_Glisses
                     if (i == cmd.Length-1) i = 0;
                     else i++;
                 }
-                if (key.Key == ConsoleKey.Enter) call_function(i);
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    call_function(i);
+                    Console.Clear();
+                }
                 if (key.Key == ConsoleKey.Escape) running = false;
             }
             while (running);
@@ -56,12 +61,16 @@ namespace Mots_Glisses
                 {
                     if (j == i)
                     {
-                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine(cmd[i]);
                         Console.ResetColor();
                     }
-                    else Console.WriteLine(cmd[j]);
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine(cmd[j]);
+                    }
                 }
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("*********************");
@@ -129,8 +138,42 @@ namespace Mots_Glisses
                                 lauch_game_menu(game);
                             }
                             else game.start();
-                        } 
+                        }
                         break;
+                    case 4:
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Tools.print_center("*********************");
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Tools.print_center("Mots Glisses : Règles");
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Tools.print_center("*********************");
+                        Console.WriteLine();
+                        Console.WriteLine($"Le jeu est composé {game.Nb_round_by_player} tours de {game.Player_time}s par joueurs.");
+                        Console.WriteLine("Le se termine lorsque le plateau est vide ou que le nombre de tours par joueurs est écoulé.");
+                        Console.WriteLine("A chaque tour vous allez devoir trouver le plus de mots possibles dans le plateau. La première lettre d'un mot doit impérativement se situer dans la dernière ligne du plateau.");
+                        Console.WriteLine("Une fois un mot trouvé le plateau s'actualise et vous continuer de jouer jusqu'à ce que le temps soit écoulé.");
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine("Calculs des scores");
+                        Console.WriteLine("*******************");
+                        Console.ResetColor();
+                        Console.WriteLine("Le calcul des scores prends en compte la longeure de chaque mot ainsi que les lettres qui les composent.");
+                        Console.WriteLine($"Un mot de n lettres rapporte {game.Length_score_multiplicator}*n points.");
+                        Console.ResetColor();
+                        Dictionary<string, int> weight = new Dictionary<string, int>();
+                        bool verif;
+                        (verif, weight) = game.get_weighting();
+                        Console.WriteLine();
+                        if (verif) Tools.print_dictionary(weight);
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine("Erreur dans l'importation du fichier de pondération");
+                            Console.ResetColor();
+                        }
+                        Console.ReadKey();
+                        break;    
 
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -270,7 +313,6 @@ namespace Mots_Glisses
             while (running);
             void display()
             {
-                Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("Select Board");
                 Console.WriteLine("*********************");
                 Console.ResetColor();

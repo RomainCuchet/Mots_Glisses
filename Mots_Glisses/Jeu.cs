@@ -35,6 +35,21 @@ namespace Mots_Glisses
             get { return players; }
         }
 
+        public int Nb_round_by_player
+        {
+            get { return nb_round_by_player; }
+        }
+
+        public int Player_time
+        {
+            get { return player_time; }
+        }
+
+        public double Length_score_multiplicator
+        {
+            get { return length_score_multiplicator; }
+        }
+
 
         public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 15, string score_weighting_path = "../../Annexes/letters.txt", double length_score_multiplicator = 2) // time in secondes
         {
@@ -46,6 +61,8 @@ namespace Mots_Glisses
             this.players = players;
             this.length_score_multiplicator = length_score_multiplicator;
         }
+
+
 
         public void start()
         {
@@ -68,19 +85,20 @@ namespace Mots_Glisses
                 Console.ResetColor();
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine($"Les règles sont simples. A tour de rôle vous allez devoir trouver un maximum de mots en {player_time} secondes. Le jeu se termine après {nb_round_by_player} rounds pas joueur ou lorsque le plateau est vide. Plus un mot est long et ses lettres rares plus il rapporte de points !");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.ResetColor();
                 Console.WriteLine($"Bon courage\n{players_toString()}");
                 Console.WriteLine("Que le meilleur gagne !");
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine();
-                Tools.print_center(Tools.toString_mat(Tools.random_char_mat(8,8)));
-                Thread.Sleep(10000);
+                Thread.Sleep(4000);
                 nb_lasting_round = nb_round_by_player * players.Count(); // get the total number of rounds according to the given parameters
                 int i = 0;
                 while (nb_lasting_round > 0)
                 {
+                    Console.Clear();
                     Console.WriteLine($"Prépare toi {players[i].Name} ton tour va commencer");
                     Thread.Sleep(print_delay);
                     round(players[i]);
@@ -97,7 +115,13 @@ namespace Mots_Glisses
             Console.WriteLine("Le jeu est terminé");
             (bool valid, Dictionary<string, int> weighting) = get_weighting();
             if (valid) assign_scores(weighting);
-            else throw new Exception("Erreur dans la génération des scores");
+            else
+            {
+                assign_scores(null);
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Erreur dans l'importation du fichier de pondération, on calculera les scores sans prendre en compte les lettres qui compose le mot");
+                Console.ResetColor();
+            }
             sort_players();
             Console.WriteLine($"Féliciation {players[0].Name} tu es premier avec un score de {players[0].Score} !");
             Console.WriteLine($"Les mots que tu as trouvé sont :  {players[0].found_words_toString()}");
@@ -107,7 +131,10 @@ namespace Mots_Glisses
                 Console.WriteLine($"{players[i].Name} tu es à la {i + 1} ème position avec {players[i].Score} points");
                 Console.WriteLine($"Les mots que tu as trouvé sont :  {players[i].found_words_toString()}");
             }
-            Thread.Sleep(10000);
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Appuyer sur une touche pour quitter la page");
+            Console.ResetColor();
+            Console.ReadKey();
             foreach (Joueur player in players) player.reset_score();
         }
 
@@ -213,7 +240,7 @@ namespace Mots_Glisses
 
         public void assign_scores(Dictionary<string, int> weighting)
         {
-            double score;
+            double score;            
             foreach (Joueur player in players) // assign its score to each player
             {
                 score = 0;
@@ -221,10 +248,13 @@ namespace Mots_Glisses
                 {
                     string word = w.ToUpper();
                     score += word.Length * length_score_multiplicator; // increase score according to the length of the word and length_score_multiplicator
-                    foreach (char letter in word) // increase score according to the weighting of each letter
+                    if (weighting != null)
                     {
-                        try { score += weighting[char.ToString(letter)]; }
-                        catch { throw new Exception($"key {letter} is missing in weighting"); };
+                        foreach (char letter in word) // increase score according to the weighting of each letter
+                        {
+                            try { score += weighting[char.ToString(letter)]; }
+                            catch { throw new Exception($"key {letter} is missing in weighting"); };
+                        }
                     }
                 }
                 player.add_score(score);
@@ -239,6 +269,7 @@ namespace Mots_Glisses
             bool running = true;
             do
             {
+                Console.Clear();
                 Console.Clear();
                 Console.WriteLine($"La main est à {player.Name} pour {Math.Round(player_time - (DateTime.Now - start_time).TotalSeconds,1)} secondes");
                 Console.WriteLine();
