@@ -393,8 +393,13 @@ namespace Mots_Glisses
             result.Replace(Environment.NewLine, "\r");
             return result;
         }
-
-        public static List<string> get_csv_file_names_from_folder(string folderPath)
+        /// <summary>
+        /// get all the file in the given folder that have the given extension
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public static List<string> get_file_names_from_folder(string folderPath, string extension)
         {
             List<string> csvFileNames = new List<string>();
 
@@ -404,7 +409,7 @@ namespace Mots_Glisses
                 if (Directory.Exists(folderPath))
                 {
                     // Obtenir tous les fichiers CSV dans le dossier
-                    string[] csvFiles = Directory.GetFiles(folderPath, "*.csv");
+                    string[] csvFiles = Directory.GetFiles(folderPath, $"*.{extension}");
 
                     // Obtenir uniquement les noms de fichiers
                     foreach (string csvFile in csvFiles)

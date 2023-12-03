@@ -76,6 +76,7 @@ namespace Mots_Glisses.Tests
             board = new Plateau(racine + "valide3.csv");
             (found, correct_path) = board.search("Romain");
             if (!found) Assert.Fail();
+            board.disable_diagonale_search();
             (found, correct_path) = board.search("thOmas");
             if(found) Assert.Fail();
             board.enable_diagonale_search();

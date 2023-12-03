@@ -69,6 +69,8 @@ namespace Mots_Glisses
 
         public void reset_score() { score = 0; }
 
+        public void reset_found_words() { found_words.Clear(); }
+
         /// <summary>
         /// return wether the word have been previously find or not 
         /// </summary>

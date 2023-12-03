@@ -68,7 +68,6 @@ namespace Mots_Glisses
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine(cmd[j]);
                     }
                 }
@@ -148,6 +147,7 @@ namespace Mots_Glisses
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                         Tools.print_center("*********************");
                         Console.WriteLine();
+                        Console.ResetColor();
                         Console.WriteLine($"Le jeu est composé {game.Nb_round_by_player} tours de {game.Player_time}s par joueurs.");
                         Console.WriteLine("Le se termine lorsque le plateau est vide ou que le nombre de tours par joueurs est écoulé.");
                         Console.WriteLine("A chaque tour vous allez devoir trouver le plus de mots possibles dans le plateau. La première lettre d'un mot doit impérativement se situer dans la dernière ligne du plateau.");
@@ -247,12 +247,13 @@ namespace Mots_Glisses
                 switch (num_ex)
                 {
                     case 0:
-                        List<string> names = Tools.get_csv_file_names_from_folder("../../Annexes");
+                        List<string> names = Tools.get_file_names_from_folder("../../Annexes/checked_boards","csv");
                         start_game(game,names);
                         break;
 
                     case 1:
-                        Console.WriteLine("A implémenter");
+                        names = Tools.get_file_names_from_folder("../../Annexes/generation_file","txt");
+                        start_game(game, names);
                         break;
 
                     default:

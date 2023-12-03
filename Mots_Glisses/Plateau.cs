@@ -19,50 +19,16 @@ namespace Mots_Glisses
         public char[,] Board { get { return board; } }
         public bool Enable_diagonal_search { get { return enable_diagonal_search; } }
 
-        public Plateau(string fichier = "../../Annexes/board1.csv", bool enable_diagonal_search = true)
+        public Plateau(string file = "../../Annexes/board1.csv", bool enable_diagonal_search = true)
         {
             this.enable_diagonal_search = enable_diagonal_search;
-            if (fichier.Substring(fichier.Length - 3) == "csv")
+            if (file.Substring(file.Length - 3) == "csv")
             {
-                try
-                {
-                    List<string> Liste = new List<string>();
-                    StreamReader sr = new StreamReader(fichier); // trows an exeption if not possible
-                    string s;
-                    int taille = -1;
-                    bool verif = true;
-                    while ((s = sr.ReadLine()) != null && verif)
-                    {
-                        verif = Is_Valid(s);
-                        if (taille == -1) taille = s.Length;
-                        if (taille == s.Length) verif = Is_Valid(s);
-                        s = s.Replace(separator, "");
-                        s = s.ToLower();
-                        Liste.Add(s);
-                    }
-                    if (verif)
-                    {
-                        board = new char[Liste.Count, taille/2+1]; // in taille we counted all the separator. There isn't one at the end
-                        for (int i = 0; i < Liste.Count; i++)
-                        {
-                            for (int j = 0; j < Liste[i].Length; j++)
-                            {
-                                board[i, j] = Liste[i][j];
-                            }
-                        }
-                    }
-                    sr.Close();
-                }
-                catch (Exception e)
-                {
-                    // Let the user know what went wrong.
-                    Console.WriteLine("The file couldn't be read:");
-                    Console.WriteLine(e.Message);
-                }
+                Constructor_csv(file);
             }
-            else if (fichier.Substring(fichier.Length - 3) == "txt")
+            else if (file.Substring(file.Length - 3) == "txt")
             {
-                Console.WriteLine("not implemented yet");
+                Constructor_txt(file);
             }
             else throw new Exception("file extension not accepted");
         }
@@ -75,6 +41,167 @@ namespace Mots_Glisses
         public void disable_diagonale_search()
         {
             enable_diagonal_search = false;
+        }
+
+        /// <summary>
+        /// create a file.csv from another file.csv already existing and following standards.
+        /// </summary>
+        /// <param name="file">enables to reach the file we want to open</param>
+        public void Constructor_csv(string file)
+        {
+            try
+            {
+                StreamReader sr = new StreamReader(file);
+                try
+                {
+                    List<string> Liste = new List<string>();
+                    string s;
+                    int len = -1;
+                    bool verif = true;
+                    while ((s = sr.ReadLine()) != null && verif)
+                    {
+                        if (len == -1) len = s.Length;
+                        if (len == s.Length) verif = Is_Valid_csv(s);
+                        else verif = false;
+                        s = s.Replace(";", "");
+                        s = s.ToLower();
+                        Liste.Add(s);
+                    }
+                    if (verif)
+                    {
+                        board = new char[Liste.Count, len / 2 + 1];
+                        for (int i = 0; i < Liste.Count; i++)
+                        {
+                            for (int j = 0; j < Liste[i].Length; j++)
+                            {
+                                board[i, j] = Liste[i][j];
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("File couldn't be read");
+                    Console.WriteLine(e.Message);
+                }
+                finally { sr.Close(); }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("File not found");
+            }
+        }
+
+        /// <summary>
+        /// Check that string s is following standards for file.csv
+        /// </summary>
+        /// <param name="s">is one line of the file wee use as foundation</param>
+        /// <returns>true if s is following standards, false if not</returns>
+        public bool Is_Valid_csv(string s)
+        {
+            bool dot_komma = true;
+            bool verif = true;
+            for (int i = 0; i < s.Length && verif; i++)
+            {
+                if (Char.IsLetter(s[i]) && dot_komma) dot_komma = false;
+                else if (s[i] == ';' && !dot_komma) dot_komma = true;
+                else verif = false;
+            }
+            return verif;
+        }
+
+        /// <summary>
+        /// create a file.txt from another file.txt already existing and following standards.
+        /// </summary>
+        /// <param name="file">enables to reach the file we want to open</param>
+        public void Constructor_txt(string file)
+        {
+            try
+            {
+                StreamReader sr = new StreamReader(file);
+                try
+                {
+                    List<string[]> Liste = new List<string[]>();
+                    Random r = new Random();
+                    string s;
+                    string[] strings;
+                    int val;
+                    int[] value;
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        strings = s.Split(',');
+                        strings[0] = strings[0].ToLower(); //faux
+                        Liste.Add(strings);
+                    }
+                    if (Is_Valid_txt(Liste))
+                    {
+                        value = new int[Liste.Count];
+                        string[] max_iteration = new string[Liste.Count];
+                        for (int i = 0; i < Liste.Count; i++)
+                        {
+                            for (int j = 0; j < Convert.ToInt32(Liste[i][1]); j++) max_iteration[i] += Liste[i][0];
+                            value[i] = Convert.ToInt32(Liste[i][2]);
+                        }
+                        board = new char[8, 8];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                do
+                                {
+                                    val = r.Next(26);
+                                    if (max_iteration[val].Length > 0)
+                                    {
+                                        board[i, j] = max_iteration[val][0];
+                                    }
+                                } while (max_iteration[val].Length == 0);
+                                max_iteration[val] = max_iteration[val].Remove(0, 1);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("File couldn't be read");
+                    Console.WriteLine(e.Message);
+                }
+                finally { sr.Close(); }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("File not found");
+            }
+        }
+
+        /// <summary>
+        /// Check that List<string[]> s is following standards for file.txt
+        /// </summary>
+        /// <param name="s">is the file separates with Split()</param>
+        /// <returns>true if s is following standards, false otherwise</returns>
+        public bool Is_Valid_txt(List<string[]> s)
+        {
+            bool verif = true;
+            if (s.Count != 26) verif = false;
+            for (int i = 0; i < s.Count && verif == true; i++)
+            {
+                if (Char.TryParse(s[i][0], out char letter))
+                {
+                    if (letter != 97 + i) verif = false;
+                }
+                else verif = false;
+                if (int.TryParse(s[i][1], out int result))
+                {
+                    if (result < 0) verif = false;
+                }
+                else verif = false;
+                if (int.TryParse(s[i][2], out int result2))
+                {
+                    if (result2 < 0) verif = false;
+                }
+                else verif = false;
+            }
+            return verif;
         }
 
         public bool Is_Valid(string s)
@@ -314,9 +441,15 @@ namespace Mots_Glisses
         /// <returns>true if empty, false otherwise</returns>
         public bool is_empty()
         {
-            if (board == null) return true;
-            foreach(char c in board) if(c!=empty_char) return false;
-            return true;
+            bool empty = true;
+            if (board != null)
+            {
+                for (int j = 0; j < board.GetLength(1) && empty; j++)
+                {
+                    if (Char.IsLetter(board[board.GetLength(0) - 1, j])) empty = false;
+                }
+            }
+            return empty;
         }
     }
 }

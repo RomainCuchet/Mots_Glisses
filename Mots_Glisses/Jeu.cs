@@ -135,7 +135,11 @@ namespace Mots_Glisses
             Console.WriteLine("Appuyer sur une touche pour quitter la page");
             Console.ResetColor();
             Console.ReadKey();
-            foreach (Joueur player in players) player.reset_score();
+            foreach (Joueur player in players)
+            {
+                player.reset_score();
+                player.reset_found_words();
+            }
         }
 
         public bool add_player(string name)
@@ -321,6 +325,7 @@ namespace Mots_Glisses
                 Console.WriteLine($"Vous avez trouvé {counter} mots");
                 game_over(); // the board is empty it is game over
             }
+            Thread.Sleep(print_delay);
         }
             
     }
