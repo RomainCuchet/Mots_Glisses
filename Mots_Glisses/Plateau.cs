@@ -11,12 +11,14 @@ namespace Mots_Glisses
 {
     public class Plateau
     {
-        char[,] board = null; // char of lower case 
+        char[,] board = null; // char of lower case
+        char[,] saved_board;
         bool enable_diagonal_search;
         string separator = ";";
         char empty_char = ' ';
 
         public char[,] Board { get { return board; } }
+        public char[,] Saved_board { get { return saved_board; } }
         public bool Enable_diagonal_search { get { return enable_diagonal_search; } }
 
         public Plateau(string file = "../../Annexes/board1.csv", bool enable_diagonal_search = true)
@@ -77,6 +79,14 @@ namespace Mots_Glisses
                                 board[i, j] = Liste[i][j];
                             }
                             Console.WriteLine();
+                        }
+                    }
+                    saved_board = new char[board.GetLength(0), board.GetLength(1)];
+                    for (int i = 0; i < board.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < board.GetLength(1); j++)
+                        {
+                            saved_board[i, j] = board[i, j];
                         }
                     }
                 }
@@ -167,6 +177,14 @@ namespace Mots_Glisses
                     Console.WriteLine(e.Message);
                 }
                 finally { sr.Close(); }
+                saved_board = new char[8,8];
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        saved_board[i, j] = board[i, j];
+                    }
+                }
             }
             catch (FileNotFoundException)
             {
@@ -369,7 +387,7 @@ namespace Mots_Glisses
         /// <exception cref="Exception">raise if it's impossible to save the board</exception>
         public void save(string folder = "../../Annexes/saved_boards/", string file_name = "board", string counter_path = "counter.txt")
         {
-            if(board!=null && board.Length > 0)
+            if(saved_board!=null && saved_board.Length > 0)
             {
                 try
                 {
@@ -379,15 +397,14 @@ namespace Mots_Glisses
                     int counter = Convert.ToInt32(line);
                     Console.WriteLine(folder + file_name + counter + ".csv");
                     StreamWriter sw = new StreamWriter(folder + file_name+counter+".csv");
-                    Tools.print_mat(board);
-                    for (int i = 0; i < board.GetLength(0); i++) // copy the board into a new csv file
+                    for (int i = 0; i < saved_board.GetLength(0); i++) // copy the board into a new csv file
                     {
                         line = "";
-                        for (int j = 0; j < board.GetLength(1) - 1; j++)
+                        for (int j = 0; j < saved_board.GetLength(1) - 1; j++)
                         {
-                            line += board[i, j] + separator;
+                            line += saved_board[i, j] + separator;
                         }
-                        line += board[i, board.GetLength(1) - 1];
+                        line += saved_board[i, saved_board.GetLength(1) - 1];
                         sw.WriteLine(line);
                     }
                     sw.Close();

@@ -50,8 +50,7 @@ namespace Mots_Glisses
             get { return length_score_multiplicator; }
         }
 
-
-        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 15, string score_weighting_path = "../../Annexes/letters.txt", double length_score_multiplicator = 2) // time in secondes
+        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 2, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2) // time in secondes
         {
             this.dictionary = dictionary;
             this.board = board;
@@ -70,9 +69,16 @@ namespace Mots_Glisses
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Il doit y avoir au moins un joueur pour lancer une partie");
+                Thread.Sleep(print_delay);
                 Console.ResetColor();
-            }   
-                
+            }
+            else if (board.Board == null || board.Board.Length == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Erreur dans la génération du plateau");
+                Thread.Sleep(print_delay);
+                Console.ResetColor();
+            }
             else
             {
                 Console.Clear();
@@ -112,7 +118,10 @@ namespace Mots_Glisses
 
         public void game_over()
         {
-            Console.WriteLine("Le jeu est terminé");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("Le jeu est terminé !");
+            Console.ResetColor();
             (bool valid, Dictionary<string, int> weighting) = get_weighting();
             if (valid) assign_scores(weighting);
             else
@@ -131,10 +140,6 @@ namespace Mots_Glisses
                 Console.WriteLine($"{players[i].Name} tu es à la {i + 1} ème position avec {players[i].Score} points");
                 Console.WriteLine($"Les mots que tu as trouvé sont :  {players[i].found_words_toString()}");
             }
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("Appuyer sur une touche pour quitter la page");
-            Console.ResetColor();
-            Console.ReadKey();
             foreach (Joueur player in players)
             {
                 player.reset_score();
@@ -278,7 +283,7 @@ namespace Mots_Glisses
                 Console.WriteLine($"La main est à {player.Name} pour {Math.Round(player_time - (DateTime.Now - start_time).TotalSeconds,1)} secondes");
                 Console.WriteLine();
                 Console.WriteLine(board.toString());
-                Console.WriteLine("Entrez un mot présent dans la board");
+                Console.WriteLine("Entrez un mot présent dans le plateau");
                 word = Console.ReadLine();
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 if ((DateTime.Now - start_time).TotalSeconds < player_time) // we must check the time

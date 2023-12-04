@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace Mots_Glisses
 {
@@ -187,7 +188,7 @@ namespace Mots_Glisses
         public static void lauch_game_menu(Jeu game)
         {
             int print_delay = 2000; // print delay in ms
-            string[] cmd = new string[] { "choisir son plateau", "générer un plateau aléatoire"};
+            string[] cmd = new string[] { "choisir un plateau à thème", "générer un plateau aléatoire", "choisir un plateau sauvegardé"};
             int i = 0;
             bool running = true;
             ConsoleKeyInfo key;
@@ -244,16 +245,24 @@ namespace Mots_Glisses
             void call_function(int num_ex)
             {
                 Console.Clear();
+                string sub_folder;
                 switch (num_ex)
                 {
                     case 0:
-                        List<string> names = Tools.get_file_names_from_folder("../../Annexes/checked_boards","csv");
-                        start_game(game,names);
+                        sub_folder = "checked_boards";
+                        List<string> names = Tools.get_file_names_from_folder("../../Annexes/"+sub_folder,"csv");
+                        start_game(game, names, sub_folder);
                         break;
 
                     case 1:
-                        names = Tools.get_file_names_from_folder("../../Annexes/generation_file","txt");
-                        start_game(game, names);
+                        sub_folder = "generation_file";
+                        names = Tools.get_file_names_from_folder("../../Annexes/"+sub_folder,"txt");
+                        start_game(game, names, sub_folder,true);
+                        break;
+                    case 2:
+                        sub_folder = "saved_boards";
+                        names = Tools.get_file_names_from_folder("../../Annexes/"+sub_folder, "csv");
+                        start_game(game, names, sub_folder);
                         break;
 
                     default:
@@ -263,19 +272,15 @@ namespace Mots_Glisses
                         break;
                 }
             }
-
-            
-            
         }
 
-        public static void start_game(Jeu game, List<string> names)
+        public static void start_game(Jeu game, List<string> names, string sub_folder, bool enable_save = false)
         {
             int print_delay = 2000; // print delay in ms
             Console.WriteLine("Veuillez utiliser les flèches pour naviguer dans le menu et pressez entrer pour valider une commande");
             int i = 0;
             bool running = true;
             ConsoleKeyInfo key;
-            char[,] random_mat = Tools.random_char_mat(8, 8);
             do
             {
                 Console.Clear();
@@ -302,8 +307,16 @@ namespace Mots_Glisses
                 }
                 if (key.Key == ConsoleKey.Enter)
                 {
-                    game.Board = new Plateau("../../Annexes/" + names[i]);
+                    game.Board = new Plateau($"../../Annexes/{sub_folder}/{names[i]}");
                     game.start();
+                    if (enable_save)
+                    {
+                        save_menu(game);
+                    }
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Appuyer sur une touche pour quitter la page");
+                    Console.ResetColor();
+                    Console.ReadKey();
                     menu(game);
                 }
                 if (key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.Escape)
@@ -314,6 +327,7 @@ namespace Mots_Glisses
             while (running);
             void display()
             {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("Select Board");
                 Console.WriteLine("*********************");
                 Console.ResetColor();
@@ -331,6 +345,35 @@ namespace Mots_Glisses
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("*********************");
                 Console.ResetColor();
+            }
+        }
+
+        public static void save_menu(Jeu game)
+        {
+            ConsoleKeyInfo key;
+            Console.WriteLine();
+            Console.WriteLine(Tools.toString_mat(game.Board.Saved_board));
+            Console.WriteLine("Appuyer sur s pour sauvegarder ou sur une autre touche pour passer");
+            key = Console.ReadKey();
+            if(key.Key == ConsoleKey.S)
+            {
+                try
+                {
+                    game.Board.save();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Le plateau a bien été sauvegardé");
+                    Console.ResetColor();
+                }
+                catch
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Une erreur est surevenue durant l'enregistrement");
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Le plateau n'a pas été sauvegardé");
             }
         }
     }

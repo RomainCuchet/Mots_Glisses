@@ -56,9 +56,9 @@
   <ItemGroup>
     <None Include="Annexes\board3.csv" />
     <None Include="Annexes\board2.csv" />
-    <None Include="Annexes\checked_boards\board1.csv" />
-    <None Include="Annexes\checked_boards\board2.csv" />
-    <None Include="Annexes\checked_boards\board3.csv" />
+    <None Include="Annexes\checked_boards\ingenieur.csv" />
+    <None Include="Annexes\checked_boards\secret.csv" />
+    <None Include="Annexes\checked_boards\sport.csv" />
     <None Include="Annexes\Test\Plateau\search\correct_path.csv" />
     <None Include="Annexes\Test\Plateau\search\word_not_last_row.csv" />
     <None Include="Annexes\Test\Plateau\search\valide1.csv" />
@@ -80,7 +80,6 @@
   <ItemGroup>
     <Content Include="Annexes\french_words.txt" />
     <Content Include="Annexes\generation_file\letters.txt" />
-    <Content Include="Annexes\letters.txt" />
     <Content Include="Annexes\saved_boards\counter.txt" />
     <Content Include="Annexes\sorted_french_words.txt" />
   </ItemGroup>
