@@ -50,7 +50,7 @@ namespace Mots_Glisses
             get { return length_score_multiplicator; }
         }
 
-        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 2, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2) // time in secondes
+        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 30, int player_time = 2, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2) // time in secondes
         {
             this.dictionary = dictionary;
             this.board = board;
