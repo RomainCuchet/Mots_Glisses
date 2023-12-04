@@ -6,7 +6,7 @@ L'ensemble du code a été réalisé par :
 > **Romain Cuchet**
 >  **Thomas Coste**
 
-![ro](https://i.ibb.co/m6dYzLx/Diagramme-vierge.png)
+![ro]([https://i.ibb.co/m6dYzLx/Diagramme-vierge.png](https://i.ibb.co/dMhDSHg/Diagramme-vierge-1.png))
 
 ## Nos choix
 
