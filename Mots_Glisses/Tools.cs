@@ -12,11 +12,20 @@ namespace Mots_Glisses
     public class Tools
     {
         /// <summary>
-        /// Merge two sorted arrays of strings into one sorted array of string
+        /// Merges two arrays of strings into a single sorted array.
         /// </summary>
-        /// <param name="tab1">the first array of strings</param>
-        /// <param name="tab2">the second array of strings</param>
-        /// <returns>a sorted array of strings composed with the element of the two given arrays</returns>
+        /// <param name="tab1">The first array of strings to merge.</param>
+        /// <param name="tab2">The second array of strings to merge.</param>
+        /// <returns>
+        ///   A new array containing all elements from both input arrays, sorted in alphabetical order.
+        /// </returns>
+        /// <remarks>
+        ///   This function takes two arrays of strings and merges them into a new array. The resulting
+        ///   array is sorted in alphabetical order based on the comparison of string elements.
+        ///   The merging process involves comparing elements from both arrays and inserting them
+        ///   into the new array in a sorted manner. If one array is exhausted, the remaining elements
+        ///   from the other array are appended to the result. The function returns the sorted array.
+        /// </remarks>
         public static string[] merge(string[] tab1, string[] tab2)
         {
             string[] tab = new string[tab1.Length + tab2.Length];
@@ -77,6 +86,21 @@ namespace Mots_Glisses
 
             return merge(merge_sort(left), merge_sort(right));
         }
+
+        /// <summary>
+        /// Reads a file containing French words, sorts each line alphabetically, and
+        /// writes the sorted words to a destination file.
+        /// </summary>
+        /// <param name="folder">The folder path where the files are located. Default is "../../Annexes".</param>
+        /// <param name="origin_file">The name of the file containing unsorted French words. Default is "french_words.txt".</param>
+        /// <param name="destination_file">The name of the file to store the sorted French words. Default is "sorted_french_words.txt".</param>
+        /// <remarks>
+        ///   This function reads the specified file line by line, splits each line into words,
+        ///   sorts the words alphabetically using the merge sort algorithm, and writes the sorted
+        ///   words to the specified destination file. The folder parameter specifies the location
+        ///   of the files. If any issues occur during the process, an exception is caught,
+        ///   and an error message is displayed.
+        /// </remarks>
         public static void get_sorted_mots_français(string folder = "../../Annexes", string origin_file = "french_words.txt", string destination_file = "sorted_french_words.txt")
         {
             try
@@ -217,6 +241,13 @@ namespace Mots_Glisses
             return chars;
         }
 
+
+        /// <summary>
+        /// Prints the elements of a 2D array to the console, separating elements by a space,
+        /// and rows by newline characters. Handles cases where the matrix is null or empty.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="m">The 2D array to print.</param>
         public static void print_mat<T>(T[,] m)
         {
             if (m == null) Console.WriteLine("matrix null");
@@ -232,6 +263,15 @@ namespace Mots_Glisses
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Converts a 2D array to a string representation, where each element is separated by a space,
+        /// and rows are separated by newline characters.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="m">The 2D array to convert to a string.</param>
+        /// <returns>
+        ///   A string representation of the 2D array, or a specific message if the array is null or empty.
+        /// </returns>
         public static string toString_mat<T>(T[,] m)
         {
             if (m == null) return "matrix null";
@@ -289,6 +329,16 @@ namespace Mots_Glisses
             return is_founded;
         }
 
+
+        /// <summary>
+        /// Compares two 2D char matrices for equality.
+        /// </summary>
+        /// <param name="m1">The first char matrix to compare.</param>
+        /// <param name="m2">The second char matrix to compare.</param>
+        /// <returns>
+        ///   <c>true</c> if the matrices are of the same dimensions and contain identical
+        ///   elements at corresponding positions; otherwise, <c>false</c>.
+        /// </returns>
         public static bool char_matrixs_equals(char[,] m1, char[,] m2)
         {
             {
@@ -317,6 +367,10 @@ namespace Mots_Glisses
             }
         }
 
+        /// <summary>
+        /// print a text at the center of the current window
+        /// </summary>
+        /// <param name="text">the text to print</param>
         public static void print_center(string text)
         {
             int screenWidth = Console.WindowWidth;
@@ -331,6 +385,12 @@ namespace Mots_Glisses
             Console.WriteLine(text);
         }
 
+        /// <summary>
+        /// checks if two matrixs of bools have equel values 
+        /// </summary>
+        /// <param name="m1"></param>
+        /// <param name="m2"></param>
+        /// <returns>bool</returns>
         public static bool bool_matrixs_equals(bool[,] m1, bool[,] m2)
         {
             {
@@ -358,6 +418,13 @@ namespace Mots_Glisses
                 return true;
             }
         }
+
+        /// <summary>
+        /// generates a random matrix of chars
+        /// </summary>
+        /// <param name="height">the height of the required matrix</param>
+        /// <param name="width">the width of the required matrix</param>
+        /// <returns>a random matrix of chars with the dimensions height*width </returns>
         public static char[,] random_char_mat(int height, int width)
         {
             char[,] matrix = new char[height, width];
@@ -375,6 +442,7 @@ namespace Mots_Glisses
             return matrix;
         }
 
+        // useless
         public static string random_board_string()
         {
             char[,] board = random_char_mat(8, 8);
@@ -431,6 +499,10 @@ namespace Mots_Glisses
             return csvFileNames;
         }
 
+        /// <summary>
+        /// print on the console the given dictionary of strings
+        /// </summary>
+        /// <param name="dictionnaire"></param>
         public static void print_dictionary(Dictionary<string, int> dictionnaire)
         {
             // Vérifier si le dictionnaire est nul ou vide

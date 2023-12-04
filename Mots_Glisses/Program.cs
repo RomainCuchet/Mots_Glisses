@@ -15,8 +15,8 @@ namespace Mots_Glisses
 
         static void Main(string[] args)
         {
-            Jeu game = new Jeu(new Dictionnaire(), new Plateau());
-            Interface.menu(game);
+            Jeu game = new Jeu(new Dictionnaire(), new Plateau()); // get the game
+            Interface.menu(game); // enable the player to interact with the game using a command line interface
         }
     }
 }

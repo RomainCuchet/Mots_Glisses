@@ -10,6 +10,10 @@ namespace Mots_Glisses
 {
     internal class Interface
     {
+        /// <summary>
+        /// The home page of our game
+        /// </summary>
+        /// <param name="game"></param>
         public static void menu(Jeu game)
         {
             bool is_submenu = true;
@@ -184,7 +188,10 @@ namespace Mots_Glisses
                 }
             } 
         }
-
+        /// <summary>
+        /// Allow the player to lauch a game from the file and manner of its choice  
+        /// </summary>
+        /// <param name="game">our game object</param>
         public static void lauch_game_menu(Jeu game)
         {
             int print_delay = 2000; // print delay in ms
@@ -274,6 +281,13 @@ namespace Mots_Glisses
             }
         }
 
+        /// <summary>
+        /// enable to select a file located in root/sub_folder and lauch a game from it
+        /// </summary>
+        /// <param name="game">the game object</param>
+        /// <param name="names">a list containing the names of all the file in the folder</param>
+        /// <param name="sub_folder">a folder located in root</param>
+        /// <param name="enable_save"></param>
         public static void start_game(Jeu game, List<string> names, string sub_folder, bool enable_save = false)
         {
             int print_delay = 2000; // print delay in ms
@@ -347,13 +361,16 @@ namespace Mots_Glisses
                 Console.ResetColor();
             }
         }
-
+        /// <summary>
+        /// The menu to save a randomly generated board 
+        /// </summary>
+        /// <param name="game"></param>
         public static void save_menu(Jeu game)
         {
             ConsoleKeyInfo key;
             Console.WriteLine();
             Console.WriteLine(Tools.toString_mat(game.Board.Saved_board));
-            Console.WriteLine("Appuyer sur s pour sauvegarder ou sur une autre touche pour passer");
+            Console.WriteLine("Appuyer sur s pour sauvegarder le plateau ou sur une autre touche pour passer");
             key = Console.ReadKey();
             if(key.Key == ConsoleKey.S)
             {

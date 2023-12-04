@@ -222,6 +222,10 @@ namespace Mots_Glisses
             return verif;
         }
 
+        /// <summary>
+        /// Checks if the input string is a valid sequence of letters separated by semicolons.
+        /// </summary>
+        /// <param name="s">The input string to validate.</param>
         public bool Is_Valid(string s)
         {
             bool dot_komma = true;
@@ -379,12 +383,18 @@ namespace Mots_Glisses
             else return false;
         }
         /// <summary>
-        /// save the current board in a new csv file
+        /// Saves the current state of a board to a CSV file in a specified folder.
         /// </summary>
-        /// <param name="folder">the saving folder</param>
-        /// <param name="file_name">the generic name of our saved board, will be completed afterward</param>
-        /// <param name="counter_path">the path to the counter</param>
-        /// <exception cref="Exception">raise if it's impossible to save the board</exception>
+        /// <param name="folder">The folder path where the saved boards will be stored. Default is "../../Annexes/saved_boards/".</param>
+        /// <param name="file_name">The base name for the saved CSV files. Default is "board".</param>
+        /// <param name="counter_path">The file path for storing the counter used in file names. Default is "counter.txt".</param>
+        /// <remarks>
+        ///   This function saves the current state of the board to a CSV file in the specified folder.
+        ///   The file name is constructed by appending a counter value to the base file name.
+        ///   The counter is read from a file, and after saving the board, the counter is incremented.
+        ///   The new counter value is then written back to the file for the next save.
+        ///   If any issues occur during the process, an exception is thrown with an error message.
+        /// </remarks>
         public void save(string folder = "../../Annexes/saved_boards/", string file_name = "board", string counter_path = "counter.txt")
         {
             if(saved_board!=null && saved_board.Length > 0)
