@@ -16,6 +16,7 @@ namespace Mots_Glisses
         Dictionnaire dictionary;
         Plateau board;
         List<Joueur> players = null;
+        bool running = true;
         string score_weighting_path;
         int player_time;
         char separator = ',';
@@ -50,7 +51,7 @@ namespace Mots_Glisses
             get { return length_score_multiplicator; }
         }
 
-        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 30, int player_time = 2, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2) // time in secondes
+        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 30, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2) // time in secondes
         {
             this.dictionary = dictionary;
             this.board = board;
@@ -102,7 +103,7 @@ namespace Mots_Glisses
                 Thread.Sleep(4000);
                 nb_lasting_round = nb_round_by_player * players.Count(); // get the total number of rounds according to the given parameters
                 int i = 0;
-                while (nb_lasting_round > 0)
+                while (nb_lasting_round > 0 && running)
                 {
                     Console.Clear();
                     Console.WriteLine($"Prépare toi {players[i].Name} ton tour va commencer");
@@ -145,6 +146,7 @@ namespace Mots_Glisses
                 player.reset_score();
                 player.reset_found_words();
             }
+            running = true;
         }
 
         public bool add_player(string name)
@@ -275,7 +277,6 @@ namespace Mots_Glisses
             DateTime start_time = DateTime.Now;
             string word;
             int counter = 0;
-            bool running = true;
             do
             {
                 Console.Clear();
@@ -324,12 +325,8 @@ namespace Mots_Glisses
                 Console.ResetColor();
             }
             while ((DateTime.Now - start_time).TotalSeconds < player_time && running);
-            if (running) Console.WriteLine($"Le temps est écoulé. Vous avez trouvé {counter} mots");
-            else
-            {
-                Console.WriteLine($"Vous avez trouvé {counter} mots");
-                game_over(); // the board is empty it is game over
-            }
+            if(running) Console.WriteLine($"Le temps est écoulé. Vous avez trouvé {counter} mots");
+            else Console.WriteLine($"La matrice est vide. Vous avez trouvé {counter} mots");
             Thread.Sleep(print_delay);
         }
             

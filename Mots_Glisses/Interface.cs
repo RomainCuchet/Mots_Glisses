@@ -153,7 +153,7 @@ namespace Mots_Glisses
                         Tools.print_center("*********************");
                         Console.WriteLine();
                         Console.ResetColor();
-                        Console.WriteLine($"Le jeu est composé {game.Nb_round_by_player} tours de {game.Player_time}s par joueurs.");
+                        Console.WriteLine($"Le jeu est composé de {game.Nb_round_by_player} tours de {game.Player_time}s par joueurs.");
                         Console.WriteLine("Le se termine lorsque le plateau est vide ou que le nombre de tours par joueurs est écoulé.");
                         Console.WriteLine("A chaque tour vous allez devoir trouver le plus de mots possibles dans le plateau. La première lettre d'un mot doit impérativement se situer dans la dernière ligne du plateau.");
                         Console.WriteLine("Une fois un mot trouvé le plateau s'actualise et vous continuer de jouer jusqu'à ce que le temps soit écoulé.");

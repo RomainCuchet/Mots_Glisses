@@ -56,9 +56,12 @@
   <ItemGroup>
     <None Include="Annexes\board3.csv" />
     <None Include="Annexes\board2.csv" />
+    <None Include="Annexes\checked_boards\facile.csv" />
     <None Include="Annexes\checked_boards\ingenieur.csv" />
     <None Include="Annexes\checked_boards\secret.csv" />
+    <None Include="Annexes\checked_boards\math.csv" />
     <None Include="Annexes\checked_boards\sport.csv" />
+    <None Include="Annexes\Test\Plateau\empty.csv" />
     <None Include="Annexes\Test\Plateau\search\correct_path.csv" />
     <None Include="Annexes\Test\Plateau\search\word_not_last_row.csv" />
     <None Include="Annexes\Test\Plateau\search\valide1.csv" />

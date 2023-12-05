@@ -208,6 +208,5 @@ namespace Mots_Glisses
 
             Console.WriteLine(result.ToString());
         }
-
     }
 }

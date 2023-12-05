@@ -431,36 +431,28 @@ namespace Mots_Glisses
 
         public string toString(bool in_tab = false)
         {
-            if(board == null)
+            if (board == null) return "matrice nulle";
+            else if (board.Length == 0) return "matrice vide";
+            string str = "";
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                return "board is null";
-            }
-            if (!in_tab)
-            {
-                return Tools.toString_mat(board);
-            }
-            else
-            {
-                int rows = board.GetLength(0);
-                int cols = board.GetLength(1);
-                string result = "";
-                for (int i = 0; i < rows; i++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    for (int j = 0; j < cols; j++)
-                    {
-                        result += $"|{board[i, j]}";
-                    }
-                    result += "|"+ Environment.NewLine;
-                    for (int j = 0; j < cols; j++)
-                    {
-                        result += "--";
-                    }
-                    result += Environment.NewLine;
+                    str += "____";
                 }
-                result += Environment.NewLine;
-                result.Replace(Environment.NewLine, "\r");
-                return result;
+                str += "\n\n| ";
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    str += (board[i, j] + " | ");
+                }
+                str += "\n";
             }
+            for (int j = 0; j < board.GetLength(1); j++)
+            {
+                str += "____";
+            }
+            str += "\n";
+            return str;
         }
         /// <summary>
         /// checks whether the board is empty or not  
