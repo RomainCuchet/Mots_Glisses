@@ -28,6 +28,7 @@ Nous avons constaté qu'un ensemble de fonctions était nécessaire dans l'ensem
  - `is_alphabetically_ordered()` compare l'ordre alphabétique de deux mots
  - `print_mat()` permet d'afficher en console une matrice de dimension 2 quel que soit sont type
  - `is_file_alphabetically_ordered()` prends un fichier texte et retourne `true` s'il est trié dans l'ordre alphabétique
+ - `get_file_names_from_folder()` prends en paramètre un dossier retourne sous forme d'une liste le nom de tous les fichiers comportant l'extensionde fichier spécifiée
 
 Dans la classe `Plateau` la recherche diagonale est activée par défaut.
 
