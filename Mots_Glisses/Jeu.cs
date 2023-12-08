@@ -8,6 +8,7 @@ using System.Media;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NAudio.Wave;
 
 namespace Mots_Glisses
 {
@@ -24,6 +25,7 @@ namespace Mots_Glisses
         int nb_lasting_round;
         double length_score_multiplicator;
         int print_delay = 2000; // en ms
+        string sound_folder = "../../Annexes/Sound/";
 
         public Plateau Board
         {
@@ -329,6 +331,8 @@ namespace Mots_Glisses
             else Console.WriteLine($"La matrice est vide. Vous avez trouvé {counter} mots");
             Thread.Sleep(print_delay);
         }
-            
+
     }
+
+    
 }
