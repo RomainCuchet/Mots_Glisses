@@ -399,7 +399,6 @@ namespace Mots_Glisses
                     string line = sr.ReadLine();
                     sr.Close();
                     int counter = Convert.ToInt32(line);
-                    Console.WriteLine(folder + file_name + counter + ".csv");
                     StreamWriter sw = new StreamWriter(folder + file_name+counter+".csv");
                     for (int i = 0; i < saved_board.GetLength(0); i++) // copy the board into a new csv file
                     {

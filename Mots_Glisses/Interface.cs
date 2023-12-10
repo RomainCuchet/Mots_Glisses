@@ -199,7 +199,6 @@ namespace Mots_Glisses
             int i = 0;
             bool running = true;
             ConsoleKeyInfo key;
-            char[,] random_mat = Tools.random_char_mat(8, 8);
             do
             {
                 Console.Clear();
