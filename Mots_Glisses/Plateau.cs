@@ -320,24 +320,6 @@ namespace Mots_Glisses
             }
         }
 
-        public void update_matrix(bool[,] correct_path)
-        {
-            bool did_go_down = false;
-            for (int i = 0; i < correct_path.GetLength(0); i++)
-            {
-                for (int j = 0; j < correct_path.GetLength(1); j++)
-                {
-                    if (did_go_down && j != 0) { j--; did_go_down = false; }
-                    else if (did_go_down && j == 0) { j = correct_path.GetLength(1) - 1; i--; did_go_down = false; }
-                    if (correct_path[i, j])
-                    {
-                        down(correct_path, board, i, j);
-                        did_go_down = true;
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// update the matrix following information from search given as correct_path
         /// </summary>
