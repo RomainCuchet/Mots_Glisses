@@ -223,23 +223,6 @@ namespace Mots_Glisses
         }
 
         /// <summary>
-        /// Checks if the input string is a valid sequence of letters separated by semicolons.
-        /// </summary>
-        /// <param name="s">The input string to validate.</param>
-        public bool Is_Valid(string s)
-        {
-            bool dot_komma = true;
-            bool verif = true;
-            for (int i = 0; i < s.Length && verif; i++)
-            {
-                if (Char.IsLetter(s[i]) && dot_komma) dot_komma = false;
-                else if (s[i] == ';' && !dot_komma) dot_komma = true;
-                else verif = false;
-            }
-            return verif;
-        }
-
-        /// <summary>
         /// given a word tell wether you can write it in the board according to the rulls of the game
         /// </summary>
         /// <param name="word"></param>
@@ -355,33 +338,44 @@ namespace Mots_Glisses
             }
         }
 
+        /// <summary>
+        /// update the matrix following information from search given as correct_path
+        /// </summary>
+        /// <param name="correct_path">is the matrix we get from search which marks the element to update</param>
+        public void update_matrix(bool[,] correct_path)
+        {
+            for (int i = 0; i < correct_path.GetLength(0); i++)
+            {
+                for (int j = 0; j < correct_path.GetLength(1); j++)
+                {
+                    if (correct_path[i, j])
+                    {
+                        // If the letter is marked as belonging to the word typed in, update the matrix
+                        down(correct_path, board, i, j);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get down the elements from coordinates x and y. The value in [x,y] dissapears because corrext_path[x,y]=true
+        /// </summary>
+        /// <param name="correct_path">matrix we get from search and marks the element to update</param>
+        /// <param name="mat">matrix we need to update following information from correct_path</param>
+        /// <param name="min_x">coordinates on x(or line) of the paramaters which disappears</param>
+        /// <param name="win_y">coordinates on y(or column) of the paramaters which disappears</param>
         public void down(bool[,] correct_path, char[,] mat, int min_x, int min_y)
         {
             for (int i = min_x; i > 0; i--)
             {
+                //The value which is above comes down to replace the former one
                 mat[i, min_y] = mat[i - 1, min_y];
                 correct_path[i, min_y] = correct_path[i - 1, min_y];
             }
-            mat[0, min_y] = empty_char;
+            mat[0, min_y] = empty_char; // The higher case is set to empty_char
             correct_path[0, min_y] = false;
         }
-        /// <summary>
-        /// allow to handle a new word
-        /// </summary>
-        /// <param name="word">the word to compute</param>
-        /// <returns>true is the word could be played, false otherwise</returns>
-        public bool handle_word(string word)
-        {
-            bool found;
-            bool[,] correct_path;
-            (found, correct_path) = search(word);
-            if (found)
-            {
-                update_matrix(correct_path); // update the matrix 
-                return true;
-            }
-            else return false;
-        }
+        
         /// <summary>
         /// Saves the current state of a board to a CSV file in a specified folder.
         /// </summary>
