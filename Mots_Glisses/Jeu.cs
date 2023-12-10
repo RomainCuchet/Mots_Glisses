@@ -142,7 +142,8 @@ namespace Mots_Glisses
             }
             sort_players();
             StopMp3();
-            PlayMp3(sound_folder+"game-over.mp3");
+            if (running) PlayMp3(sound_folder + "game-over.mp3");
+            else PlayMp3(sound_folder + "applause.mp3");
             Console.WriteLine($"Féliciation {players[0].Name} tu es premier avec un score de {players[0].Score} !");
             Console.WriteLine($"Les mots que tu as trouvé sont :  {players[0].found_words_toString()}");
             for (int i = 1; i < players.Count; i++)
