@@ -34,6 +34,11 @@ Dans la classe `Plateau` la recherche diagonale est activée par défaut.
  - `disable_diagonale_search()` permet de désactiver la recherche diagonale
  - `search()` permet de dire si un mot donné est capable d'être écrit dans la board (selon les règles du jeu)
  - `Plateau()` le constructeur de la classe peut prendre en argument un fichier txt ou csv. Depuis un fichier csv il génère le plateau préétabli. Depuis un fichier txt il génère un plateau aléatoire en respectant les contraintes imposées.
+
+Nous avons ajouté au projet une partie d'effets sonores quand le joueur rentre un bon et un mauvais mot, qaund la partie est lancée et quand elle se finit.
+ - `PlayMp3()` permet de lancer un son mp3.
+ - `StopMp3()` permet de forcer l'arrêt d'un son.
+ 
 ## Warnings
  - `Console.Clear()` vide la fenêtre courante. Cette dernière est distincte de la fenêtre qui s'affiche sur Windows pour une question d'espace mémoire. Si jamais le texte à afficher dépasse la taille de la fenêtre courante les données seront écrasées. Le texte sera toujours visible sur la fenêtre Windows mais il ne sera pas supprimé par console.Clear(). Il est donc conseillé de ne pas redimensionner la fenêtre en dessous d'une certaine valeur pour un meilleure affichage.
  - La structure de notre interface pourrait être optimisée et clarifiée. Etant fonctionnelle il ne nous a pas semblé primordiale de risquer la génération de bugs afin de clarifier un code qui n'a pas vocation à être modifié ni à être maintenu ou mis à jour dans le futur.
