@@ -25,7 +25,9 @@ namespace Mots_Glisses
         int nb_lasting_round;
         double length_score_multiplicator;
         int print_delay = 2000; // en ms
-        string sound_folder = "../../Annexes/Sound/";
+
+        bool song = true; // enables the song version
+        private WaveOutEvent outputDevice; // var used to play song
 
         public Plateau Board
         {
@@ -330,6 +332,34 @@ namespace Mots_Glisses
             if(running) Console.WriteLine($"Le temps est écoulé. Vous avez trouvé {counter} mots");
             else Console.WriteLine($"La matrice est vide. Vous avez trouvé {counter} mots");
             Thread.Sleep(print_delay);
+        }
+
+        /// <summary>
+        /// Play a song. when the file has finished, outputDevice is disposed
+        /// </summary>
+        /// <param name="filePath">Path of the mp3 file. It has to be writen from the base of the path: /C, not /bin/debug</param>
+        public void PlayMp3(string filePath)
+        {
+            using (var audioFile = new AudioFileReader(filePath))
+            {
+                outputDevice = new WaveOutEvent(); // Create a WaveOutEvent object to output the audio with the good format
+                outputDevice.PlaybackStopped += (s, e) => outputDevice.Dispose(); // When the audio has stopped, outputDevice is disposed to free ressources
+                outputDevice.Init(audioFile); // Initialize outputDevice to play the file
+                outputDevice.Play(); // Play the file
+            }
+        }
+
+        /// <summary>
+        /// Stops the music and disposes outputDevice
+        /// </summary>
+        public void StopMp3()
+        {
+            if (outputDevice != null) // If there is a file in process
+            {
+                outputDevice.Stop(); // Stops the audio
+                outputDevice.Dispose(); // Disposes outputDevice to free ressources
+                outputDevice = null; // outputDevice is free
+            }
         }
 
     }
