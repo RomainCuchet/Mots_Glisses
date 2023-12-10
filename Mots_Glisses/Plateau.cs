@@ -357,7 +357,25 @@ namespace Mots_Glisses
             mat[0, min_y] = empty_char; // The higher case is set to empty_char
             correct_path[0, min_y] = false;
         }
-        
+
+        /// <summary>
+        /// allow to handle a new word
+        /// </summary>
+        /// <param name="word">the word to compute</param>
+        /// <returns>true is the word could be played, false otherwise</returns>
+        public bool handle_word(string word)
+        {
+            bool found;
+            bool[,] correct_path;
+            (found, correct_path) = search(word);
+            if (found)
+            {
+                update_matrix(correct_path); // update the matrix 
+                return true;
+            }
+            else return false;
+        }
+
         /// <summary>
         /// Saves the current state of a board to a CSV file in a specified folder.
         /// </summary>
