@@ -116,6 +116,10 @@
     <Content Include="Annexes\generation_file\letters.txt" />
     <Content Include="Annexes\saved_boards\counter.txt" />
     <Content Include="Annexes\sorted_french_words.txt" />
+    <Content Include="Annexes\sounds\applause.mp3" />
+    <Content Include="Annexes\sounds\good_luck.mp3" />
+    <Content Include="Annexes\sounds\oh_no.mp3" />
+    <Content Include="Annexes\sounds\well_done.mp3" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
