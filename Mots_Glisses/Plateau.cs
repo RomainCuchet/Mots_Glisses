@@ -141,7 +141,7 @@ namespace Mots_Glisses
                     while ((s = sr.ReadLine()) != null)
                     {
                         strings = s.Split(',');
-                        strings[0] = strings[0].ToLower(); //faux
+                        strings[0] = strings[0].ToLower(); 
                         Liste.Add(strings);
                     }
                     if (Is_Valid_txt(Liste))
@@ -169,6 +169,14 @@ namespace Mots_Glisses
                                 max_iteration[val] = max_iteration[val].Remove(0, 1);
                             }
                         }
+                        saved_board = new char[8,8];
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                saved_board[i, j] = board[i, j];
+                            }
+                        }
                     }
                 }
                 catch (Exception e)
@@ -177,14 +185,6 @@ namespace Mots_Glisses
                     Console.WriteLine(e.Message);
                 }
                 finally { sr.Close(); }
-                saved_board = new char[8,8];
-                for (int i = 0; i < 8; i++)
-                {
-                    for (int j = 0; j < 8; j++)
-                    {
-                        saved_board[i, j] = board[i, j];
-                    }
-                }
             }
             catch (FileNotFoundException)
             {
