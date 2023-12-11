@@ -74,7 +74,7 @@ namespace Mots_Glisses
 
         public void start()
         {
-            if (players == null || players.Count < 1 || board.is_empty())
+            if (players == null || players.Count < 1)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Il doit y avoir au moins un joueur pour lancer une partie");
