@@ -74,14 +74,14 @@ namespace Mots_Glisses
 
         public void start()
         {
-            if (players == null || players.Count < 1)
+            if (players == null || players.Count < 1 || board.is_empty())
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Il doit y avoir au moins un joueur pour lancer une partie");
                 Thread.Sleep(print_delay);
                 Console.ResetColor();
             }
-            else if (board.Board == null || board.Board.Length == 0)
+            else if (board.Board == null || board.Board.Length == 0 || board.is_empty())
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("Erreur dans la génération du plateau");

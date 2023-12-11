@@ -427,6 +427,7 @@ namespace Mots_Glisses
         /// <returns>a random matrix of chars with the dimensions height*width </returns>
         public static char[,] random_char_mat(int height, int width)
         {
+            if (height < 0 || width < 0) return null;
             char[,] matrix = new char[height, width];
             Random random = new Random();
 

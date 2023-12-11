@@ -200,7 +200,7 @@ namespace Mots_Glisses
         public bool Is_Valid_txt(List<string[]> s)
         {
             bool verif = true;
-            if (s.Count != 26) verif = false;
+            if (s==null||s.Count != 26) verif = false;
             for (int i = 0; i < s.Count && verif == true; i++)
             {
                 if (Char.TryParse(s[i][0], out char letter))
@@ -365,6 +365,7 @@ namespace Mots_Glisses
         /// <returns>true is the word could be played, false otherwise</returns>
         public bool handle_word(string word)
         {
+            if (word == null) return false;
             bool found;
             bool[,] correct_path;
             (found, correct_path) = search(word);
