@@ -14,6 +14,7 @@ namespace Mots_Glisses
 {
     internal class Jeu
     {
+        bool activate_soud;
         Dictionnaire dictionary;
         Plateau board;
         List<Joueur> players = null;
@@ -55,7 +56,7 @@ namespace Mots_Glisses
             get { return length_score_multiplicator; }
         }
 
-        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 30, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2, string sound_folder = "../../Annexes/sounds/") // time in secondes
+        public Jeu(Dictionnaire dictionary, Plateau board, List<Joueur> players = null, int nb_round_by_player = 2, int player_time = 30, string score_weighting_path = "../../Annexes/generation_file/letters.txt", double length_score_multiplicator = 2, string sound_folder = "../../Annexes/sounds/", bool activate_sound = true) // time in secondes
         {
             this.dictionary = dictionary;
             this.board = board;
@@ -65,13 +66,13 @@ namespace Mots_Glisses
             this.players = players;
             this.length_score_multiplicator = length_score_multiplicator;
             this.sound_folder = sound_folder;
+            this.activate_soud = activate_sound;
         }
 
 
 
         public void start()
         {
-
             if (players == null || players.Count < 1)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -141,9 +142,8 @@ namespace Mots_Glisses
                 Console.ResetColor();
             }
             sort_players();
-            StopMp3();
-            if (running) PlayMp3(sound_folder + "game-over.mp3");
-            else PlayMp3(sound_folder + "applause.mp3");
+            if (running) PlayMusic(sound_folder + "game-over.mp3");
+            else PlayMusic(sound_folder + "applause.mp3");
             Console.WriteLine($"Féliciation {players[0].Name} tu es premier avec un score de {players[0].Score} !");
             Console.WriteLine($"Les mots que tu as trouvé sont :  {players[0].found_words_toString()}");
             for (int i = 1; i < players.Count; i++)
@@ -224,7 +224,6 @@ namespace Mots_Glisses
             string res = "";
             foreach (Joueur player in players) res += $"{player.Name}\n";
             return res.Substring(0, res.Length - 1);
-
         }
 
         public (bool, Dictionary<string, int>) get_weighting()
@@ -304,8 +303,7 @@ namespace Mots_Glisses
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("Votre mot doit avoir une longeur supérieure à 1");
-                        StopMp3();
-                        PlayMp3(sound_folder+"oh_no.mp3");
+                        PlayMusic(sound_folder + "oh_no.mp3");
                         Thread.Sleep(print_delay);
                         Console.ResetColor();
                     }
@@ -317,8 +315,7 @@ namespace Mots_Glisses
                             {
                                 if (board.handle_word(word)) // handle the word and update the board if possible
                                 {
-                                    StopMp3();
-                                    PlayMp3(sound_folder+"well_done.mp3");
+                                    PlayMusic(sound_folder+"well_done.mp3");
                                     Console.ForegroundColor = ConsoleColor.DarkGreen;
                                     Console.WriteLine($"Félicitation vous avez trouvé {word}");
                                     Thread.Sleep(print_delay);
@@ -332,24 +329,21 @@ namespace Mots_Glisses
                                 else
                                 {
                                     Console.WriteLine($"Il est impossible d'écrire {word} dans le plateau");
-                                    StopMp3();
-                                    PlayMp3(sound_folder+"oh_no.mp3");
+                                    PlayMusic(sound_folder+"oh_no.mp3");
                                     Thread.Sleep(print_delay);
                                 }
                             }
                             else
                             {
                                 Console.WriteLine($"{word} n'est pas dans le dictionnaire français");
-                                StopMp3();
-                                PlayMp3(sound_folder+"oh_no.mp3");
+                                PlayMusic(sound_folder+"oh_no.mp3");
                                 Thread.Sleep(print_delay);
                             }
                         }
                         else
                         {
                             Console.WriteLine($"Dommage vous avez déjà joué le mot {word}. Vous ne pouvez plus l'utiliser ;)");
-                            StopMp3();
-                            PlayMp3(sound_folder+"oh_no.mp3");
+                            PlayMusic(sound_folder+"oh_no.mp3");
                             Thread.Sleep(print_delay);
                         }
                     }
@@ -357,8 +351,7 @@ namespace Mots_Glisses
                 else
                 {
                     Console.WriteLine($"Trop tard ! Vous n'avez pas eu le temps de jouer {word}");
-                    StopMp3();
-                    PlayMp3(sound_folder+"oh_no.mp3");
+                    PlayMusic(sound_folder+"oh_no.mp3");
                     Thread.Sleep(print_delay);
                 }
                 Console.ResetColor();
@@ -381,6 +374,21 @@ namespace Mots_Glisses
                 outputDevice.PlaybackStopped += (s, e) => outputDevice.Dispose(); // When the audio has stopped, outputDevice is disposed to free ressources
                 outputDevice.Init(audioFile); // Initialize outputDevice to play the file
                 outputDevice.Play(); // Play the file
+            }
+        }
+
+        public void PlayMusic(string filePath)
+        {
+            if (activate_soud)
+            {
+                try
+                {
+                    StopMp3();
+                    PlayMp3(sound_folder + filePath);
+                }
+                catch
+                {
+                }
             }
         }
 
