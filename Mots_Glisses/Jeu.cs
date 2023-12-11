@@ -27,6 +27,7 @@ namespace Mots_Glisses
         double length_score_multiplicator;
         int print_delay = 2000; // en ms
         string sound_folder;
+        string fail_sound = "fail.mp3";
 
         private WaveOutEvent outputDevice;
 
@@ -303,7 +304,7 @@ namespace Mots_Glisses
                     {
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("Votre mot doit avoir une longeur supérieure à 1");
-                        PlayMusic(sound_folder + "oh_no.mp3");
+                        PlayMusic(sound_folder + fail_sound);
                         Thread.Sleep(print_delay);
                         Console.ResetColor();
                     }
@@ -329,21 +330,21 @@ namespace Mots_Glisses
                                 else
                                 {
                                     Console.WriteLine($"Il est impossible d'écrire {word} dans le plateau");
-                                    PlayMusic(sound_folder+"oh_no.mp3");
+                                    PlayMusic(sound_folder+fail_sound);
                                     Thread.Sleep(print_delay);
                                 }
                             }
                             else
                             {
                                 Console.WriteLine($"{word} n'est pas dans le dictionnaire français");
-                                PlayMusic(sound_folder+"oh_no.mp3");
+                                PlayMusic(sound_folder + fail_sound);
                                 Thread.Sleep(print_delay);
                             }
                         }
                         else
                         {
                             Console.WriteLine($"Dommage vous avez déjà joué le mot {word}. Vous ne pouvez plus l'utiliser ;)");
-                            PlayMusic(sound_folder+"oh_no.mp3");
+                            PlayMusic(sound_folder + fail_sound);
                             Thread.Sleep(print_delay);
                         }
                     }
@@ -351,7 +352,7 @@ namespace Mots_Glisses
                 else
                 {
                     Console.WriteLine($"Trop tard ! Vous n'avez pas eu le temps de jouer {word}");
-                    PlayMusic(sound_folder+"oh_no.mp3");
+                    PlayMusic(sound_folder + fail_sound);
                     Thread.Sleep(print_delay);
                 }
                 Console.ResetColor();
